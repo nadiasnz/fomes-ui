@@ -1,8 +1,4 @@
 'use client';
-// import * as React from 'react';
-// import Stack from '@mui/material/Stack';
-// import Button from '@mui/material/Button';
-
 import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -160,23 +156,4 @@ export function Header() {
     );
 }
 
-// export function Header() {
-//     return (
-//         <Stack
-//             direction="row"
-//             spacing={2}
-//             sx={{
-//                 justifyContent: "flex-end",
-//                 alignItems: "center",
-//             }}
-//         >
-//             <Button variant="contained" color="primary">
-//                 ESCRIBE TU RESEÑA
-//             </Button>
-//             <Button variant="contained" color="primary">
-//                 INICIAR SESIÓN
-//             </Button>
-//         </Stack>
-//     );
-// }
 
