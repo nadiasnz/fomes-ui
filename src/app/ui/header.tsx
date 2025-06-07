@@ -12,13 +12,20 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
+import { useRouter } from 'next/navigation';
 
 export function Header() {
     const isLoggedIn = true;
-    const pages = isLoggedIn ? ['Escribe tu reseña'] : ['Escribe tu reseña','Iniciar sesión'];
     const settings = ['Mis reseñas', 'Cerrar sesión'];
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
+
+    const router = useRouter();
+
+    const handleOnClick = (path: string) => (() => {
+        handleCloseNavMenu();
+        router.push(path);
+    });
 
     const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorElNav(event.currentTarget);
@@ -43,7 +50,7 @@ export function Header() {
                         variant="h6"
                         noWrap
                         component="a"
-                        href="#app-bar-with-responsive-menu"
+                        href="/"
                         sx={{
                             mr: 2,
                             display: { xs: 'none', md: 'flex' },
@@ -84,18 +91,21 @@ export function Header() {
                             onClose={handleCloseNavMenu}
                             sx={{ display: { xs: 'block', md: 'none' } }}
                         >
-                            {pages.map((page) => (
-                                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                                    <Typography sx={{ textAlign: 'center' }}>{page}</Typography>
-                                </MenuItem>
-                            ))}
+                            <MenuItem key='Escribe tu reseña' onClick={handleOnClick('/new-review')}>
+                                <Typography sx={{ textAlign: 'center' }}>Escribe tu reseña</Typography>
+                            </MenuItem>
+
+                            {!isLoggedIn && <MenuItem key='Iniciar sesión' onClick={handleOnClick('/login')}>
+                                <Typography sx={{ textAlign: 'center' }}>Iniciar sesión</Typography>
+                            </MenuItem>}
+
                         </Menu>
                     </Box>
                     <Typography
                         variant="h5"
                         noWrap
                         component="a"
-                        href="#app-bar-with-responsive-menu"
+                        href="/"
                         sx={{
                             mr: 2,
                             display: { xs: 'flex', md: 'none' },
@@ -110,16 +120,22 @@ export function Header() {
                         FOMES
                     </Typography>
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, alignItems: 'center', justifyContent: 'flex-end', marginRight: '20px', gap: '20px' }}>
-                        {pages.map((page) => (
-                            <Button
-                                key={page}
-                                onClick={handleCloseNavMenu}
-                                sx={{ my: 2, color: 'white', backgroundColor: '#2E7D32', display: 'block' }}
-                                variant='contained'
-                            >
-                                {page}
-                            </Button>
-                        ))}
+                        <Button
+                            key='Escribe tu reseña'
+                            onClick={handleOnClick("/new-review")}
+                            sx={{ my: 2, color: 'white', backgroundColor: '#2E7D32', display: 'block' }}
+                            variant='contained'
+                        >
+                            Escribe tu reseña
+                        </Button>
+                        {!isLoggedIn && <Button
+                            key='Iniciar sesión'
+                            onClick={handleOnClick("/login")}
+                            sx={{ my: 2, color: 'white', backgroundColor: '#2E7D32', display: 'block' }}
+                            variant='contained'
+                        >
+                            Iniciar sesión
+                        </Button>}
                     </Box>
                     {isLoggedIn && <Box sx={{ flexGrow: 0 }}>
                         <Tooltip title="Open settings">
