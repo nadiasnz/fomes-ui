@@ -5,9 +5,9 @@ import {
   Typography,
   Autocomplete,
   TextField,
-  useTheme,
   Container,
 } from "@mui/material";
+import { SearchAutocomplete } from "./ui/autocomplete";
 
 const options = [
   "Barcelona",
@@ -22,7 +22,6 @@ const options = [
 export default function Home() {
   const [value, setValue] = React.useState<string | null>(null);
   const [inputValue, setInputValue] = React.useState<string>("");
-  const theme = useTheme();
 
   return (
     <Box>
@@ -40,31 +39,7 @@ export default function Home() {
           px: 2,
         }}
       >
-        <Autocomplete
-          freeSolo
-          options={options}
-          value={value}
-          inputValue={inputValue}
-          onInputChange={(event, newInputValue) => {
-            setInputValue(newInputValue);
-          }}
-          onChange={(event, newValue) => {
-            setValue(newValue);
-          }}
-          sx={{
-            width: "100%",
-            maxWidth: 400,
-            backgroundColor: "white",
-            borderRadius: "999px",
-            boxShadow: 3,
-          }}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              placeholder="Busca tu zona de interés"
-            />
-          )}
-        />
+        <SearchAutocomplete/>
       </Box>
 
       {/* Texto inferior */}
