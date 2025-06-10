@@ -16,20 +16,31 @@ export default function NewReview() {
     const [impact, setImpact] = useState<number>(5);
     const [reviewError, setReviewError] = useState<string>('');
     const [selectedPlace, setSelectedPlace] = useState<string | null>(null);
+    const [selectedPlaceError, setSelectedPlaceError] = useState<string>('');
 
     React.useEffect(
         () => {
             if (review && reviewError){
                 setReviewError('');
-            } 
+            }
+            
+            if (selectedPlace && selectedPlaceError){
+                setSelectedPlaceError('');
+            }
         }, 
-        [review]
+        [review, selectedPlace]
     )
 
     const handleSubmit = async () => {
         setReviewError("");
         if (!review){
             setReviewError("Escriba la reseña, por favor.");
+            
+            return;
+        }
+
+        if (!selectedPlace){
+            setSelectedPlaceError("Escriba la dirección, por favor.");
 
             return;
         }
@@ -163,6 +174,7 @@ export default function NewReview() {
                     onClick={handleSubmit}
                 >ENVIAR</Button>
                 {reviewError && <Typography color='error'>{reviewError}</Typography>}
+                {selectedPlaceError && <Typography color='error'>{selectedPlaceError}</Typography>}
             </Box>
 
             <Typography variant="caption" display="block" mt={3}>
