@@ -39,7 +39,7 @@ export default function Home() {
           px: 2,
         }}
       >
-        <SearchAutocomplete/>
+        <SearchAutocomplete placeholder="Busca tu zona de interés"/>
       </Box>
 
       {/* Texto inferior */}

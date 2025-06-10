@@ -1,7 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { Autocomplete, TextField, CircularProgress } from "@mui/material";
+import { Autocomplete, TextField, CircularProgress, AutocompleteChangeReason, AutocompleteChangeDetails } from "@mui/material";
 
-export function SearchAutocomplete() {
+
+type SearchAutocompleteProps<T> = {
+  placeholder: string;
+  onChange?: (
+    event: React.SyntheticEvent,
+    value: string | null,
+    reason: AutocompleteChangeReason,
+    details?: AutocompleteChangeDetails<never> | undefined
+  ) => void;
+};
+
+export function SearchAutocomplete<T>(props: SearchAutocompleteProps<T>) {
   const [input, setInput] = useState("");
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -19,7 +30,7 @@ export function SearchAutocomplete() {
       { signal: controller.signal }
     )
       .then((res) => res.json())
-      .then((data) => { 
+      .then((data) => {
         const uniquePlaces = new Set();
         const places = data.features.map((feature) => ({
           label: feature.properties.name + ", " + feature.properties.state,
@@ -35,16 +46,16 @@ export function SearchAutocomplete() {
           state: feature.properties.state,
           county: feature.properties.county,
         }))
-        .filter((place) => { 
-          if (place.country !== "España"){
-            return false;
-          }
-          if (uniquePlaces.has(place.label)){
-            return false;
-          }
-          uniquePlaces.add(place.label);
-          return true;
-        });
+          .filter((place) => {
+            if (place.country !== "España"){
+              return false;
+            }
+            if (uniquePlaces.has(place.label)){
+              return false;
+            }
+            uniquePlaces.add(place.label);
+            return true;
+          });
 
         setOptions(places);
         setLoading(false);
@@ -60,6 +71,7 @@ export function SearchAutocomplete() {
       options={options}
       getOptionLabel={(option) => option.label || ""}
       onInputChange={(event, value) => setInput(value)}
+      onChange={props.onChange}
       // loading={loading}
       sx={{
         width: "80%",
@@ -70,7 +82,7 @@ export function SearchAutocomplete() {
       renderInput={(params) => (
         <TextField
           {...params}
-          placeholder="Busca tu zona de interés"
+          placeholder={props.placeholder}
 
           slotProps={{
             input: {
