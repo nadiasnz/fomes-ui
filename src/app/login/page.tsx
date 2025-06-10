@@ -56,7 +56,6 @@ export default function LoginPage() {
                 justifyContent: 'center',
                 px: 2,
                 marginTop: '6px',
-                backgroundColor: 'white'
             }}
         >
             <Box
@@ -72,6 +71,7 @@ export default function LoginPage() {
                         color="success"
                         fullWidth
                         required
+                        sx={{backgroundColor: 'white'}}
                     />
                     <TextField
                         name="password"
@@ -80,6 +80,7 @@ export default function LoginPage() {
                         color='success'
                         fullWidth
                         required
+                        sx={{backgroundColor: 'white'}}
                     />
 
                     <Button
