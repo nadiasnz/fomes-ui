@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Autocomplete, TextField, CircularProgress, AutocompleteChangeReason, AutocompleteChangeDetails } from "@mui/material";
+import debounce from 'lodash/debounce';
 
 
 type SearchAutocompleteProps<T> = {
@@ -17,15 +18,15 @@ export function SearchAutocomplete<T>(props: SearchAutocompleteProps<T>) {
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (input.length < 3) return;
+  const onInputChange = React.useCallback(debounce((event, value) => {
+    if (value.length < 3) return;
 
     const controller = new AbortController();
     setLoading(true);
 
     fetch(
       `https://photon.komoot.io/api/?q=${encodeURIComponent(
-        input
+        value
       )}&lang=default&limit=5`,
       { signal: controller.signal }
     )
@@ -63,14 +64,14 @@ export function SearchAutocomplete<T>(props: SearchAutocompleteProps<T>) {
       .catch(() => setLoading(false));
 
     return () => controller.abort();
-  }, [input]);
+  }, 1000), []);
 
   return (
     <Autocomplete
       freeSolo
       options={options}
       getOptionLabel={(option) => option.label || ""}
-      onInputChange={(event, value) => setInput(value)}
+      onInputChange={onInputChange}
       onChange={props.onChange}
       // loading={loading}
       sx={{
