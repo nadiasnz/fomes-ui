@@ -113,7 +113,7 @@ export default function LoginPage() {
                         sx={{ mt: 1, fontSize: { xs: '0.85rem', sm: '1rem' } }}
                     >
                         ¿Aún no tienes cuenta? Regístrate {' '}
-                        <Link href="/register" key="register-link" className="text-blue-400 hover:underline" >
+                        <Link href="/register" key="register-link" className="link-blue" >
                             aquí
                         </Link>
                     </Typography>

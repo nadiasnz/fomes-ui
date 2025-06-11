@@ -43,3 +43,13 @@ a {
     color-scheme: dark;
   }
 }
+
+.link-blue {
+  color: #60a5fa; /* similar to Tailwind's blue-400 */
+  text-decoration: none;
+}
+
+.link-blue:hover {
+  text-decoration: underline;
+}
+
