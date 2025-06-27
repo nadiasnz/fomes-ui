@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import {
     Box, TextField, Slider, Button, Typography,
-    Autocomplete, Rating,
+    Rating,
     AutocompleteChangeReason,
     AutocompleteChangeDetails
 } from '@mui/material';
