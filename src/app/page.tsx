@@ -3,25 +3,25 @@ import React from "react";
 import {
   Box,
   Typography,
-  Autocomplete,
-  TextField,
   Container,
+  AutocompleteChangeReason,
+  AutocompleteChangeDetails,
 } from "@mui/material";
 import { SearchAutocomplete } from "./ui/autocomplete";
-
-const options = [
-  "Barcelona",
-  "Madrid",
-  "Valencia",
-  "Sevilla",
-  "Bilbao",
-  "Granada",
-  "Málaga",
-];
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
-  const [value, setValue] = React.useState<string | null>(null);
-  const [inputValue, setInputValue] = React.useState<string>("");
+  const router = useRouter();
+
+  const onChange = (
+    event: React.SyntheticEvent,
+    value: string | null,
+    reason: AutocompleteChangeReason,
+    details?: AutocompleteChangeDetails<never> | undefined
+  ) => {
+    router.push(`/search-homes?name=${value.name}&state=${value.state}`);
+  };
+
 
   return (
     <Box>
@@ -30,7 +30,7 @@ export default function Home() {
         sx={{
           position: "relative",
           height: { xs: "250px", sm: "300px", md: "350px" },
-          backgroundImage: `url('/noisy holiday homes.png')`, 
+          backgroundImage: `url('/noisy holiday homes.png')`,
           backgroundSize: "cover",
           backgroundPosition: "center",
           display: "flex",
@@ -39,7 +39,7 @@ export default function Home() {
           px: 2,
         }}
       >
-        <SearchAutocomplete placeholder="Busca tu zona de interés"/>
+        <SearchAutocomplete placeholder="Busca tu zona de interés" onChange={onChange} />
       </Box>
 
       {/* Texto inferior */}
