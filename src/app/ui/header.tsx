@@ -14,9 +14,28 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import { useRouter } from 'next/navigation';
 
+const menuItemMyReviews = 'Mis reseñas';
+const menuItemMyProfile = 'Mi perfil';
+const menuItemLogOut = 'Cerrar sesión';
+const menuItemsSettings = [
+    {
+        label: menuItemMyReviews,
+        onClickRedirectPath: '/my-reviews',
+    },
+
+        {
+        label: menuItemMyProfile,
+        onClickRedirectPath: '/my-profile',
+    },
+
+    {
+        label: menuItemLogOut,
+        onClickRedirectPath: '/logout',
+    },
+]
+
 export function Header() {
     const isLoggedIn = true;
-    const settings = ['Mis reseñas', 'Cerrar sesión'];
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
@@ -24,6 +43,7 @@ export function Header() {
 
     const handleOnClick = (path: string) => (() => {
         handleCloseNavMenu();
+        handleCloseUserMenu();
         router.push(path);
     });
 
@@ -159,9 +179,9 @@ export function Header() {
                             open={Boolean(anchorElUser)}
                             onClose={handleCloseUserMenu}
                         >
-                            {settings.map((setting) => (
-                                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                                    <Typography sx={{ textAlign: 'center' }}>{setting}</Typography>
+                            {menuItemsSettings.map((setting) => (
+                                <MenuItem key={setting.label} onClick={handleOnClick(setting.onClickRedirectPath)}>
+                                    <Typography sx={{ textAlign: 'center' }}>{setting.label}</Typography>
                                 </MenuItem>
                             ))}
                         </Menu>
