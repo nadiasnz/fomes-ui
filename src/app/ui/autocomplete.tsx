@@ -11,10 +11,10 @@ type SearchAutocompleteProps<T> = {
     reason: AutocompleteChangeReason,
     details?: AutocompleteChangeDetails<never> | undefined
   ) => void;
+  value?: string;
 };
 
 export function SearchAutocomplete<T>(props: SearchAutocompleteProps<T>) {
-  const [input, setInput] = useState("");
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -69,8 +69,9 @@ export function SearchAutocomplete<T>(props: SearchAutocompleteProps<T>) {
   return (
     <Autocomplete
       freeSolo
+      value={props.value}
       options={options}
-      getOptionLabel={(option) => option.label || ""}
+      getOptionLabel={(option) => option.label || option || ""}
       onInputChange={onInputChange}
       onChange={props.onChange}
       // loading={loading}
