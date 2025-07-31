@@ -10,10 +10,12 @@ import {
     CircularProgress,
 } from '@mui/material';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function RegisterPage() {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
+    const router = useRouter();
 
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -22,28 +24,33 @@ export default function RegisterPage() {
         setError(null);
 
         const formData = new FormData(e.currentTarget);
+        const username = formData.get('username');
         const email = formData.get('email');
         const password = formData.get('password');
 
         try {
-            const res = await fetch('/api/register', {
+            const res = await fetch('http://127.0.0.1:8000/api/register/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password }),
+                body: JSON.stringify({ username, email, password }),
             });
 
             const data = await res.json();
 
-            if (!res.ok) throw new Error(data.message || 'Error al iniciar sesión');
+            if (!res.ok) {
+                const errorMessage = data.username ? 'Usuario ya existente' : 'Error al crear usuario';
+                throw new Error(errorMessage);
+            }
 
-            // ✅ Successful login: do something (redirect, token, etc.)
-            console.log('Success:', data);
+            router.push(`/login?welcome=${encodeURIComponent(username as string)}`);
+
         } catch (err: any) {
             setError(err.message);
         } finally {
             setLoading(false);
         }
     };
+
 
     return (
         <Container
@@ -63,6 +70,16 @@ export default function RegisterPage() {
                 sx={{ width: '100%' }}
             >
                 <Stack spacing={2}>
+
+                    <TextField
+                        name="username"
+                        label="Nombre de usuario"
+                        type="username"
+                        color='success'
+                        fullWidth
+                        required
+                        sx={{ backgroundColor: 'white' }}
+                    />
                     <TextField
                         name="email"
                         label="Dirección de correo"
@@ -70,7 +87,7 @@ export default function RegisterPage() {
                         color="success"
                         fullWidth
                         required
-                        sx={{backgroundColor: 'white'}}
+                        sx={{ backgroundColor: 'white' }}
                     />
                     <TextField
                         name="email"
@@ -79,7 +96,7 @@ export default function RegisterPage() {
                         color="success"
                         fullWidth
                         required
-                        sx={{backgroundColor: 'white'}}
+                        sx={{ backgroundColor: 'white' }}
                     />
                     <TextField
                         name="password"
@@ -88,7 +105,7 @@ export default function RegisterPage() {
                         color='success'
                         fullWidth
                         required
-                        sx={{backgroundColor: 'white'}}
+                        sx={{ backgroundColor: 'white' }}
                     />
 
                     <Button

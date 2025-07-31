@@ -30,18 +30,22 @@ const menuItemsSettings = [
 
     {
         label: menuItemLogOut,
-        onClickRedirectPath: '/logout',
+        onClickRedirectPath: '/',
     },
 ]
 
 export function Header() {
-    const isLoggedIn = true;
+    const accessToken = localStorage.getItem('access_token');
+    const isLoggedIn = !!accessToken;
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
     const router = useRouter();
 
-    const handleOnClick = (path: string) => (() => {
+    const handleOnClick = (path: string, label?: string) => (() => {
+        if (label === menuItemLogOut){
+            localStorage.removeItem('access_token');
+        }
         handleCloseNavMenu();
         handleCloseUserMenu();
         router.push(path);
@@ -180,7 +184,7 @@ export function Header() {
                             onClose={handleCloseUserMenu}
                         >
                             {menuItemsSettings.map((setting) => (
-                                <MenuItem key={setting.label} onClick={handleOnClick(setting.onClickRedirectPath)}>
+                                <MenuItem key={setting.label} onClick={handleOnClick(setting.onClickRedirectPath, setting.label)}>
                                     <Typography sx={{ textAlign: 'center' }}>{setting.label}</Typography>
                                 </MenuItem>
                             ))}

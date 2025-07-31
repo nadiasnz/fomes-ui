@@ -2,14 +2,18 @@
 
 import React, { useState } from 'react';
 import {
-  Box, Avatar, Typography, Button, TextField, Stack, Paper,
+  Box, Avatar, Typography, Button, TextField, Stack, Paper, Alert, IconButton
 } from '@mui/material';
+import fomesApi from '../api';
+import CloseIcon from '@mui/icons-material/Close';
 
 
 export default function ProfilePage() {
   const [preview, setPreview] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [passwordError, setPasswordError] = useState<string>('');
+  const [passwordSuccessIsOpen, setPasswordSuccessIsOpen] = useState(false);
+
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -21,7 +25,7 @@ export default function ProfilePage() {
     }
   };
 
-  const handlePasswordChange = (e: React.FormEvent<HTMLFormElement>) => {
+  const handlePasswordChange = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const currentPassword = formData.get('currentPassword');
@@ -35,21 +39,24 @@ export default function ProfilePage() {
       return;
     }
 
-
     else {
-      setPasswordError('')
+      setPasswordError('');
+      try {
+        await fomesApi.post('/change-password/', {
+          current_password: currentPassword,
+          new_password: newPassword,
+        });
+        setPasswordSuccessIsOpen(true);
+      } catch (err) {
+        // setPasswordError(err.response.status)
+        setPasswordError('error')
+
+      }
     }
-
-
-    // Handle password update (send to backend)
-    console.log({ currentPassword, newPassword });
   };
-
 
   const handleUpload = () => {
     if (!selectedFile) return;
-    // Handle upload to server
-    console.log('Uploading:', selectedFile);
   };
 
   return (
@@ -117,6 +124,24 @@ export default function ProfilePage() {
             <Button type="submit" variant="contained" color="primary">
               Cambiar contraseña
             </Button>
+
+            {passwordSuccessIsOpen && <Alert
+              severity="success"
+              variant="filled"
+              action={
+                <IconButton
+                  aria-label="close"
+                  color="inherit"
+                  size="small"
+                  onClick={() => setPasswordSuccessIsOpen(false)}
+                >
+                  <CloseIcon fontSize="inherit" />
+                </IconButton>
+              }
+              sx={{ mb: 2, borderRadius: 2, fontSize: '1rem' }}
+            >
+            Su contraseña ha sido actualizada correctamente.
+            </Alert>}
             {passwordError && <Typography color='error'>{passwordError}</Typography>}
           </Stack>
         </Box>
