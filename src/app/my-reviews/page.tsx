@@ -1,80 +1,61 @@
 'use client';
 
 import HomeCard from '../ui/home-card';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
     Grid,
     Container,
     Pagination,
+    Alert, 
+    IconButton,
     Typography,
 } from '@mui/material';
 import { useRouter } from 'next/navigation';
+import fomesApi, { UserReview } from '../api';
+import { useSearchParams } from 'next/navigation';
+import CloseIcon from '@mui/icons-material/Close';
 
 
-const listings = [
-    {
-        name: 'Piso en calle Lupiañez 15',
-        location: 'Distrito Torres',
-        rating: 3,
-        noise: 7,
-        impact: 7,
-        numberOfReviews: 6,
-        district: 'huelin',
-    },
-    {
-        name: 'Piso en calle Lupiañez 15',
-        location: 'Distrito Torres',
-        rating: 3,
-        noise: 7,
-        impact: 7,
-        numberOfReviews: 6,
-        district: 'huelin',
-    },
-    {
-        name: 'Piso en calle Lupiañez 15',
-        location: 'Distrito Torres',
-        rating: 3,
-        noise: 7,
-        impact: 7,
-        numberOfReviews: 6,
-        district: 'huelin',
-    },
-    {
-        name: 'Piso en calle Lupiañez 15',
-        location: 'Distrito Torres',
-        rating: 3,
-        noise: 7,
-        impact: 7,
-        numberOfReviews: 6,
-        district: 'huelin',
-    },
-];
 
 const ITEMS_PER_PAGE = 10;
-const TOTAL_RESULTS = 130; // Simulated number of results
-
-
 
 export default function MyReviews() {
+    const searchParams = useSearchParams();
 
     const [page, setPage] = useState(1);
+    const [reviews, setReviews] = useState<null | undefined | Array<UserReview>>(null);
+    const reviewValue = searchParams.get('review');
+    const [reviewMessageIsOpen, setReviewMessageIsOpen] = useState(true);
+    const [reviewsCount, setReviewsCount] = useState<number>(0);
     const handleChange = (event, value) => {
         setPage(value);
     };
 
     const router = useRouter();
 
-    const [paginatedListings, setPaginatedListings] = useState(listings.slice(
-        (page - 1) * ITEMS_PER_PAGE,
-        page * ITEMS_PER_PAGE
-    ));
+    useEffect(() => {
+        const fetchReviews = async () => {
+            try {
+                const apiResponse = await fomesApi.get(`/reviews:user/?page=${page}`);
+                
+                setReviews(apiResponse.data.results);
+                setReviewsCount(apiResponse.data.count);
 
-    const deleteOnClick = (index: number) => (event) => {
-        setPaginatedListings(paginatedListings.filter((item, itemIndex) => itemIndex !== index));
+            } catch (err) {
+                setReviews(undefined);
+            }
+        };
+
+        fetchReviews();
+    }, [page]);
+
+    const deleteOnClick = (reviewId: number, index: number) => (event) => {
+        setReviews(reviews?.filter((item, itemIndex) => itemIndex !== index));
+        fomesApi.delete(`reviews/${reviewId}/`);
     }
 
-    const editOnClick = (index: number) => (event) => {
-        router.push(`/my-reviews/${index}`);
+    const editOnClick = (reviewId: number) => (event) => {
+        router.push(`/my-reviews/${reviewId}`);
     }
 
     return (
@@ -85,29 +66,57 @@ export default function MyReviews() {
                 Mis reseñas
             </Typography>
 
+            {reviewMessageIsOpen && reviewValue && <Alert
+                severity="success"
+                variant="filled"
+                action={
+                    <IconButton
+                        aria-label="close"
+                        color="inherit"
+                        size="small"
+                        onClick={() => setReviewMessageIsOpen(false)}
+                    >
+                        <CloseIcon fontSize="inherit" />
+                    </IconButton>
+                }
+                sx={{ mb: 2, borderRadius: 2, fontSize: '1rem' }}
+            >
+                {reviewValue == 'created' && 'Tu reseña se ha creado correctamente.'}
+                {reviewValue == 'updated' && 'Tu reseña se ha editado correctamente.'}
+            </Alert>}
+
             <Grid
-                container
+                container   
                 spacing={4}
                 justifyContent="center"
                 sx={{ mt: 2, mb: 4 }}
             >
-                {paginatedListings.map((item, index) => (
-                    <Grid key={item.name}>
-                        <HomeCard {...{ isEditable: true, deleteOnClick: deleteOnClick(index), editOnClick: editOnClick(index), ...item }} />
+                {reviews?.map((review, index) => (
+                    <Grid key={review.id}>
+                        <HomeCard
+                            isEditable={true}
+                            deleteOnClick={deleteOnClick(review.id, index)}
+                            editOnClick={editOnClick(review.id)}
+                            name={review.home.address}
+                            district={review.home.city}
+                            rating={review.rating}
+                            noise={review.noise_level}
+                            impact={review.disturbance_level}
+                        />
                     </Grid>
                 ))}
             </Grid>
 
-            <Grid container justifyContent="center">
+            {reviewsCount > 0 && <Grid container justifyContent="center">
                 <Pagination
-                    count={Math.ceil(TOTAL_RESULTS / ITEMS_PER_PAGE)}
+                    count={Math.ceil(reviewsCount / ITEMS_PER_PAGE)}
                     page={page}
                     onChange={handleChange}
                     color="primary"
                     shape="rounded"
                     sx={{ backgroundColor: "white" }}
                 />
-            </Grid>
+            </Grid>}
         </Container>
     )
 }

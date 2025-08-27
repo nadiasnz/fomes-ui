@@ -13,7 +13,7 @@ type HomeCardProps = {
   district: string,
   rating: number,
   noise: number,
-  numberOfReviews: number,
+  numberOfReviews?: number,
   impact: number,
   isEditable?: boolean,
   editOnClick?:  MouseEventHandler<HTMLAnchorElement> | undefined,
@@ -43,7 +43,7 @@ export default function HomeCard(props: HomeCardProps) {
         <Box mt={1} mb={1}>
           <Typography variant="caption">Valoración General</Typography>
           <Rating value={props.rating} readOnly />
-          <Typography variant="caption">({props.numberOfReviews} reseñas)</Typography>
+          {props.numberOfReviews && <Typography variant="caption">({props.numberOfReviews} reseñas)</Typography>}
         </Box>
 
         <Box display="flex" gap={1} mt={2}>
