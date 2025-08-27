@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Box, TextField, Slider, Button, Typography,
     Rating,
@@ -8,6 +8,8 @@ import {
     AutocompleteChangeDetails
 } from '@mui/material';
 import { SearchAutocomplete } from '../ui/autocomplete';
+import fomesApi from '../api';
+import { useRouter } from 'next/navigation';
 
 export default function NewReview() {
     const [rating, setRating] = useState<null | number>(3);
@@ -17,68 +19,66 @@ export default function NewReview() {
     const [reviewError, setReviewError] = useState<string>('');
     const [selectedPlace, setSelectedPlace] = useState<string | null>(null);
     const [selectedPlaceError, setSelectedPlaceError] = useState<string>('');
+    const [addressNumber, setAddressNumber] = useState<string>('');
+    const [addressFloor, setAddressFloor] = useState<string>('');
+
+    const router = useRouter();
+    
+    useEffect(() => {
+        const accessToken = localStorage.getItem('access_token');
+        if (!accessToken) {
+            router.push('/login');
+        }
+    },
+        []
+    )
 
     React.useEffect(
         () => {
-            if (review && reviewError){
+            if (review && reviewError) {
                 setReviewError('');
             }
-            
-            if (selectedPlace && selectedPlaceError){
+
+            if (selectedPlace && selectedPlaceError) {
                 setSelectedPlaceError('');
             }
-        }, 
+        },
         [review, selectedPlace]
     )
 
     const handleSubmit = async () => {
         setReviewError("");
-        if (!review){
+        if (!review) {
             setReviewError("Escriba la reseña, por favor.");
-            
             return;
         }
 
-        if (!selectedPlace){
+        if (!selectedPlace) {
             setSelectedPlaceError("Escriba la dirección, por favor.");
-
             return;
         }
-        
+
 
         const reviewData = {
             rating,
-            review,
-            noise,
-            impact,
+            description: review,
+            noise_level: noise,
+            disturbance_level: impact,
         };
 
-        const homeData = selectedPlace;
+        const placeData = selectedPlace as Object;
+        const homeData = { ...placeData, address: placeData.name, zip_code: placeData.postcode, town: placeData.city, floor: addressFloor, number: addressNumber };
 
         const payload = {
-            review: reviewData, 
+            review: reviewData,
             home: homeData,
         };
 
-
-        
-
-
         try {
-            const res = await fetch('/api/submitReview', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload),
-            });
-
-            if (res.ok) {
-                alert('Reseña enviada con éxito');
-            } else {
-                alert('Error al enviar la reseña');
-            }
+            await fomesApi.post('/reviews:create_with_home/', payload);
+            router.push('/my-reviews?review=created')
         } catch (err) {
-            console.error(err);
-            alert('Error al enviar la reseña');
+            setReviewError('No se pudo crear la reseña. Por favor, inténtelo de nuevo.')
         }
     };
 
@@ -93,11 +93,11 @@ export default function NewReview() {
         }
     ]
 
-    const onChange = (    
+    const onChange = (
         event: React.SyntheticEvent,
         value: string | null,
         reason: AutocompleteChangeReason,
-        details?: AutocompleteChangeDetails<never> | undefined 
+        details?: AutocompleteChangeDetails<never> | undefined
     ) => {
         setSelectedPlace(value);
     };
@@ -105,7 +105,29 @@ export default function NewReview() {
     return (
         <Box sx={{ maxWidth: 600, mx: 'auto', p: 4 }}>
             <Typography variant="h6" mb={2}>Datos de la vivienda</Typography>
-            <SearchAutocomplete placeholder='Escribe la dirección completa' onChange={onChange}/>
+            <SearchAutocomplete placeholder='Escribe la dirección' onChange={onChange} />
+            <TextField
+                label="Número"
+                value={addressNumber}
+                onChange={(e) => setAddressNumber(e.target.value)}
+                helperText={`Número de la dirección`}
+                sx={{ my: 2, margin: '10px', backgroundColor: 'white' }}
+                slotProps={{ htmlInput: { maxLength: 5, required: true } }}
+                required={true}
+                color='success'
+            />
+
+            <TextField
+                label="Planta y letra"
+                value={addressFloor}
+                onChange={(e) => setAddressFloor(e.target.value)}
+                helperText={`Ejemplo: 2ºA`}
+                sx={{ my: 2, margin: '10px', backgroundColor: 'white' }}
+                slotProps={{ htmlInput: { maxLength: 5, required: false } }}
+                required={false}
+                color='success'
+            />
+
 
             <Box mt={4}>
                 <Typography variant="h6" mb={2}>Cuéntanos sobre esta vivienda</Typography>
@@ -115,7 +137,7 @@ export default function NewReview() {
                     name="general-rating"
                     value={rating}
                     onChange={(event, newValue) => setRating(newValue)}
-                    sx={{backgroundColor: "white"}}
+                    sx={{ backgroundColor: "white" }}
                 />
             </Box>
 
@@ -128,16 +150,16 @@ export default function NewReview() {
                 fullWidth
                 helperText={`${review.length}/1000`}
                 sx={{ my: 2, backgroundColor: 'white' }}
-                slotProps={{htmlInput: {maxLength: 1000, required: true}}}
+                slotProps={{ htmlInput: { maxLength: 1000, required: true } }}
                 error={!!reviewError}
                 required={true}
                 color='success'
-                
+
             />
 
             <Typography gutterBottom>Ruido</Typography>
             <Slider
-                sx={{color: '#65a06e'}}
+                sx={{ color: '#65a06e' }}
                 value={noise}
                 onChange={(e, val) => setNoise(val)}
                 min={0}
@@ -149,7 +171,7 @@ export default function NewReview() {
 
             <Typography gutterBottom mt={2}>Impacto en zonas comunes</Typography>
             <Slider
-                sx={{color: '#65a06e'}}
+                sx={{ color: '#65a06e' }}
                 value={impact}
                 onChange={(e, val) => setImpact(val)}
                 min={0}

@@ -4,7 +4,6 @@ const fomesApi = axios.create({
   baseURL: 'http://127.0.0.1:8000/api/',
 });
 
-// Add access token to every request
 fomesApi.interceptors.request.use((config) => {
   const token = localStorage.getItem('access_token');
   if (token) {
@@ -13,7 +12,6 @@ fomesApi.interceptors.request.use((config) => {
   return config;
 });
 
-// Redirect to login if token is invalid or expired
 fomesApi.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -26,3 +24,24 @@ fomesApi.interceptors.response.use(
 );
 
 export default fomesApi;
+
+
+export interface Home {
+  id: number;
+  address: string;
+  number: string;
+  zip_code: string;
+  city: string;
+  town: string;
+  country: string;
+}
+
+export interface UserReview {
+  id: number;
+  rating: number;
+  description: string;
+  noise_level: number;
+  disturbance_level: number;
+  created_at: string;
+  home: Home;
+}
