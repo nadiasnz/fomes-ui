@@ -5,9 +5,8 @@ import {
     Box, TextField, Slider, Button, Typography,
     Rating,
 } from '@mui/material';
-import { useParams } from 'next/navigation';
-
-
+import { useParams, useRouter } from 'next/navigation';
+import fomesApi from '@/app/api';
 
 export default function EditReview() {
     const [rating, setRating] = useState<null | number>(3);
@@ -16,6 +15,8 @@ export default function EditReview() {
     const [impact, setImpact] = useState<number>(5);
     const [reviewError, setReviewError] = useState<string>('');
     const params = useParams();
+    const reviewId = params.id;
+    const router = useRouter();
 
     React.useEffect(
         () => {
@@ -28,20 +29,20 @@ export default function EditReview() {
 
     React.useEffect(
         () => {
-            const reviewData = {
-                rating: 2,
-                review: 'hi',
-                noise: 1,
-                impact: 3,
-            };
+        
             
-            const reviewId = params.id;
-            console.log('review ID', reviewId);
+            fomesApi.get(`reviews/${reviewId}`).then(
+                (response) => {
 
-            setRating(reviewData.rating);
-            setReview(reviewData.review);
-            setNoise(reviewData.noise);
-            setImpact(reviewData.impact);
+                    const reviewData = response.data; 
+
+                    setRating(reviewData.rating);
+                    setReview(reviewData.description);
+                    setNoise(reviewData.noise_level);
+                    setImpact(reviewData.disturbance_level);
+                }
+            )
+
         },
         []
     )
@@ -56,27 +57,20 @@ export default function EditReview() {
 
         const reviewData = {
             rating,
-            review,
-            noise,
-            impact,
+            description: review,
+            noise_level: noise,
+            disturbance_level: impact,
         };
 
         try {
-            const res = await fetch('/api/submitReview', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(reviewData),
-            });
 
-            if (res.ok) {
-                alert('Reseña enviada con éxito');
-            } else {
-                alert('Error al enviar la reseña');
-            }
+            fomesApi.patch(`reviews/${reviewId}/`, reviewData);
+            router.push('/my-reviews?review=updated');
         } catch (err) {
             console.error(err);
             alert('Error al enviar la reseña');
         }
+
     };
 
     const marks = [

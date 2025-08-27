@@ -48,8 +48,7 @@ export default function ProfilePage() {
         });
         setPasswordSuccessIsOpen(true);
       } catch (err) {
-        // setPasswordError(err.response.status)
-        setPasswordError('error')
+        setPasswordError('Error al cambiar la contraseña. Asegúrese de que ha introducido la contraseña actual correctamente.')
 
       }
     }
@@ -140,7 +139,7 @@ export default function ProfilePage() {
               }
               sx={{ mb: 2, borderRadius: 2, fontSize: '1rem' }}
             >
-            Su contraseña ha sido actualizada correctamente.
+              Su contraseña ha sido actualizada correctamente.
             </Alert>}
             {passwordError && <Typography color='error'>{passwordError}</Typography>}
           </Stack>

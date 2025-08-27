@@ -14,14 +14,12 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Alert, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { useRouter } from 'next/navigation';
 
 
 export default function LoginPage() {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const searchParams = useSearchParams();
-    const router = useRouter();
 
     const welcomeUserName = searchParams.get('welcome');
     const [welcomeMessageIsopen, setWelcomeMessageIsopen] = useState(true);
