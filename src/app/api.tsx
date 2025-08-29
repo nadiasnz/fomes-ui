@@ -29,6 +29,7 @@ export default fomesApi;
 export interface Home {
   id: number;
   address: string;
+  floor: string;
   number: string;
   zip_code: string;
   city: string;
@@ -44,4 +45,19 @@ export interface UserReview {
   disturbance_level: number;
   created_at: string;
   home: Home;
+}
+
+export interface HomeWithReviewStats {
+  id: number;
+  address: string;
+  number: string;
+  floor: string;
+  zip_code: string;
+  city: string;
+  town: string;
+  country: string;
+  reviews_count: number;
+  avg_rating: number;
+  avg_noise_level: number;
+  avg_disturbance_level: number;
 }
