@@ -32,7 +32,7 @@ export default function Footer() {
               <Link href="#" color="grey" underline="hover">
                 Quiénes somos
               </Link>
-              <Link href="#" color="grey" underline="hover">
+              <Link href="/contact" color="grey" underline="hover">
                 Contacto
               </Link>
               <Link href="#" color="grey" underline="hover">
