@@ -101,11 +101,12 @@ export default function NewReview() {
     ) => {
         setSelectedPlace(value);
     };
+    const autocompleteRequiredFields = ['city', 'postcode'];
 
     return (
         <Box sx={{ maxWidth: 600, mx: 'auto', p: 4 }}>
             <Typography variant="h6" mb={2}>Datos de la vivienda</Typography>
-            <SearchAutocomplete placeholder='Escribe la dirección' onChange={onChange} />
+            <SearchAutocomplete placeholder='Escribe la dirección' onChange={onChange} requiredFields={autocompleteRequiredFields}/>
             <TextField
                 label="Número"
                 value={addressNumber}

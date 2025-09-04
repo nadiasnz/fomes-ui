@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Autocomplete, TextField, CircularProgress, AutocompleteChangeReason, AutocompleteChangeDetails } from "@mui/material";
 import debounce from 'lodash/debounce';
 
@@ -12,6 +12,7 @@ type SearchAutocompleteProps<T> = {
     details?: AutocompleteChangeDetails<never> | undefined
   ) => void;
   value?: string;
+  requiredFields?: Array<string>;
 };
 
 export function SearchAutocomplete<T>(props: SearchAutocompleteProps<T>) {
@@ -47,16 +48,25 @@ export function SearchAutocomplete<T>(props: SearchAutocompleteProps<T>) {
           state: feature.properties.state,
           county: feature.properties.county,
         }))
-          .filter((place) => {
-            if (place.country !== "España"){
-              return false;
+        .filter((place) => {
+          if (place.country !== "España"){
+            return false;
+          }
+          if (uniquePlaces.has(place.label)){
+            return false;
+          }
+          uniquePlaces.add(place.label);
+          return true;
+        }).filter((place) => {
+          if (props.requiredFields){
+            for (let field of props.requiredFields){
+              if (!place[field]){
+                return false;
+              }
             }
-            if (uniquePlaces.has(place.label)){
-              return false;
-            }
-            uniquePlaces.add(place.label);
-            return true;
-          });
+          }
+          return true;
+        });
 
         setOptions(places);
         setLoading(false);
