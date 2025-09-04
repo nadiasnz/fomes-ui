@@ -54,8 +54,22 @@ export default function ProfilePage() {
     }
   };
 
-  const handleUpload = () => {
+  const handleUpload = async () => {
     if (!selectedFile) return;
+
+    const formData = new FormData();
+    formData.append("photo", selectedFile);
+
+    try {
+      await fomesApi.patch("/profile-photo/", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      window.location.href = '/my-profile/';
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
@@ -90,6 +104,7 @@ export default function ProfilePage() {
           >
             Subir foto
           </Button>
+
         )}
 
         <Box component="form" onSubmit={handlePasswordChange} sx={{ mt: 4 }}>

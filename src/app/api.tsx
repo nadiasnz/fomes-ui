@@ -15,7 +15,10 @@ fomesApi.interceptors.request.use((config) => {
 fomesApi.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401 || error.response?.status === 403) {
+    if (
+      (error.response?.status === 401 || error.response?.status === 403) &&
+      window.location.pathname !== "/login" 
+    ) {
       localStorage.clear();
       window.location.href = '/login';
     }

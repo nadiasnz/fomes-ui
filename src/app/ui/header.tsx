@@ -13,6 +13,7 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import { useRouter } from 'next/navigation';
+import fomesApi from '../api';
 
 const menuItemMyReviews = 'Mis reseñas';
 const menuItemMyProfile = 'Mi perfil';
@@ -39,6 +40,7 @@ export function Header() {
     const isLoggedIn = !!accessToken;
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
+    const [profilePhotoUrl, setProfilePhotoUrl] = React.useState<string>('');
 
     const router = useRouter();
 
@@ -65,6 +67,18 @@ export function Header() {
     const handleCloseUserMenu = () => {
         setAnchorElUser(null);
     };
+
+    React.useEffect(
+        () => {
+            fomesApi.get(`profile-photo/`).then(
+                (response) => {
+                    const profilePhoto = response.data.photo; 
+                    setProfilePhotoUrl(profilePhoto);
+                }
+            )
+        },
+        []
+    )
 
     return (
         <AppBar position="static" color="transparent">
@@ -164,7 +178,7 @@ export function Header() {
                     {isLoggedIn && <Box sx={{ flexGrow: 0 }}>
                         <Tooltip title="Open settings">
                             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                <Avatar alt="Remy Sharp" src="" />
+                                <Avatar alt="Remy Sharp" src={profilePhotoUrl} />
                             </IconButton>
                         </Tooltip>
                         <Menu
