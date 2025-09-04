@@ -30,7 +30,7 @@ export default function Home() {
         sx={{
           position: "relative",
           height: { xs: "250px", sm: "300px", md: "350px" },
-          backgroundImage: `url('/noisy holiday homes.png')`,
+          backgroundImage: `url('/pic portada.jpg')`,
           backgroundSize: "cover",
           backgroundPosition: "center",
           display: "flex",
