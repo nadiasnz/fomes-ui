@@ -17,7 +17,7 @@ fomesApi.interceptors.response.use(
   (error) => {
     if (
       (error.response?.status === 401 || error.response?.status === 403) &&
-      window.location.pathname !== "/login" 
+      (window.location.pathname !== "/login" && window.location.pathname !== "/" )
     ) {
       localStorage.clear();
       window.location.href = '/login';
