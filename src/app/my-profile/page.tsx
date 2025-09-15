@@ -6,6 +6,8 @@ import {
 } from '@mui/material';
 import fomesApi from '../api';
 import CloseIcon from '@mui/icons-material/Close';
+import { useSearchParams } from 'next/navigation';
+
 
 
 export default function ProfilePage() {
@@ -13,6 +15,10 @@ export default function ProfilePage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [passwordError, setPasswordError] = useState<string>('');
   const [passwordSuccessIsOpen, setPasswordSuccessIsOpen] = useState(false);
+  const searchParams = useSearchParams();
+  const profilePhoto = searchParams.get('profile_photo_uploaded');
+  const [profilePhotoIsOpen, setProfilePhotoIsOpen] = useState(true);
+  
 
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,7 +72,7 @@ export default function ProfilePage() {
           "Content-Type": "multipart/form-data",
         },
       });
-      window.location.href = '/my-profile/';
+      window.location.href = '/my-profile?profile_photo_uploaded=true';
     } catch (err) {
       console.error(err);
     }
@@ -74,6 +80,23 @@ export default function ProfilePage() {
 
   return (
     <Box sx={{ p: 4 }}>
+      {profilePhotoIsOpen && profilePhoto && <Alert
+              severity="success"
+              variant="filled"
+              action={
+                <IconButton
+                  aria-label="close"
+                  color="inherit"
+                  size="small"
+                  onClick={() => setProfilePhotoIsOpen(false)}
+                >
+                  <CloseIcon fontSize="inherit" />
+                </IconButton>
+              }
+              sx={{ mb: 2, borderRadius: 2, fontSize: '1rem' }}
+            >
+              Su foto de perfil ha sido actualizada correctamente.
+            </Alert>}
       <Paper sx={{ p: 4, maxWidth: 600, mx: 'auto' }}>
         <Typography variant="h5" gutterBottom>Editar perfil</Typography>
 
