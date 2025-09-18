@@ -98,6 +98,8 @@ export default function MyReviews() {
                             deleteOnClick={deleteOnClick(review.id, index)}
                             editOnClick={editOnClick(review.id)}
                             name={review.home.address}
+                            number={review.home.number}
+                            floor={review.home.floor}
                             district={review.home.city}
                             rating={review.rating}
                             noise={review.noise_level}

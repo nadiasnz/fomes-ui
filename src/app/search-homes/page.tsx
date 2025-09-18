@@ -81,6 +81,8 @@ export default function SearchHomes() {
                     <Grid key={item.id}>
                         <HomeCard
                             name={item.address}
+                            number={item.number}
+                            floor={item.floor}
                             district={item.city}
                             rating={item.avg_rating}
                             numberOfReviews={item.reviews_count}

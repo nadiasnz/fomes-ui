@@ -10,6 +10,8 @@ import { MouseEventHandler } from 'react';
 
 type HomeCardProps = {
   name: string,
+  number: string,
+  floor?: string,
   district: string,
   rating: number,
   noise: number,
@@ -25,7 +27,7 @@ export default function HomeCard(props: HomeCardProps) {
     <Card variant="outlined">
       <CardContent>
         <Box display="flex" justifyContent="space-between" alignItems="center">
-          <Typography variant="h6">{props.name}</Typography>
+          <Typography variant="h6">{props.name} {props.number} {props.floor}</Typography>
           {props.isEditable && <Box>
             <IconButton aria-label="edit" size="small" onClick={props.editOnClick}>
               <EditIcon fontSize="small" />
