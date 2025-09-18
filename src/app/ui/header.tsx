@@ -36,17 +36,25 @@ const menuItemsSettings = [
 ]
 
 export function Header() {
-    const accessToken = localStorage.getItem('access_token');
-    const isLoggedIn = !!accessToken;
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
     const [profilePhotoUrl, setProfilePhotoUrl] = React.useState<string>('');
+    const [isLoggedIn, setIsLoggedIn]= React.useState<boolean>(false);
+
+    React.useEffect(
+        () => {
+            const accessToken = localStorage.getItem('access_token');
+            setIsLoggedIn(!!accessToken);
+        },
+        []
+    );
 
     const router = useRouter();
 
     const handleOnClick = (path: string, label?: string) => (() => {
         if (label === menuItemLogOut){
             localStorage.removeItem('access_token');
+            setIsLoggedIn(false);
         }
         handleCloseNavMenu();
         handleCloseUserMenu();
