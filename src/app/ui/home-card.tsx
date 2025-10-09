@@ -22,6 +22,7 @@ type HomeCardProps = {
   deleteOnClick?: MouseEventHandler<HTMLAnchorElement> | undefined,
 };
 
+// Card UI component to show the data of a holiday home and its reviews 
 export default function HomeCard(props: HomeCardProps) {
   return (
     <Card variant="outlined">

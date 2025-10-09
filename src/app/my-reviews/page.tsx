@@ -15,17 +15,13 @@ import fomesApi, { UserReview } from '../api';
 import { useSearchParams } from 'next/navigation';
 import CloseIcon from '@mui/icons-material/Close';
 
-
-
-const ITEMS_PER_PAGE = 10;
-
 export default function MyReviews() {
     const searchParams = useSearchParams();
 
     const [page, setPage] = useState(1);
     const [reviews, setReviews] = useState<null | undefined | Array<UserReview>>(null);
     const reviewValue = searchParams.get('review');
-    const [reviewMessageIsOpen, setReviewMessageIsOpen] = useState(true);
+    const [reviewMessageIsClosed, setReviewMessageIsClosed] = useState(false);
     const [reviewsCount, setReviewsCount] = useState<number>(0);
     const handleChange = (event, value) => {
         setPage(value);
@@ -33,6 +29,8 @@ export default function MyReviews() {
 
     const router = useRouter();
 
+    // Get review page and total count of reviews from the backend
+    // Call API when the page changes 
     useEffect(() => {
         const fetchReviews = async () => {
             try {
@@ -50,6 +48,7 @@ export default function MyReviews() {
     }, [page]);
 
     const deleteOnClick = (reviewId: number, index: number) => (event) => {
+        // Update reviews to filter out the deleted review 
         setReviews(reviews?.filter((item, itemIndex) => itemIndex !== index));
         fomesApi.delete(`reviews/${reviewId}/`);
     }
@@ -61,12 +60,11 @@ export default function MyReviews() {
     return (
         <Container sx={{ mt: 4 }}>
 
-
             <Typography align="center" variant="h6" gutterBottom>
                 Mis reseñas
             </Typography>
 
-            {reviewMessageIsOpen && reviewValue && <Alert
+            {!reviewMessageIsClosed && reviewValue && <Alert
                 severity="success"
                 variant="filled"
                 action={
@@ -74,7 +72,7 @@ export default function MyReviews() {
                         aria-label="close"
                         color="inherit"
                         size="small"
-                        onClick={() => setReviewMessageIsOpen(false)}
+                        onClick={() => setReviewMessageIsClosed(true)}
                     >
                         <CloseIcon fontSize="inherit" />
                     </IconButton>
@@ -90,7 +88,8 @@ export default function MyReviews() {
                 spacing={4}
                 justifyContent="center"
                 sx={{ mt: 2, mb: 4 }}
-            >
+            >   
+            {/* Iterate the reviews and show a card for each one */}
                 {reviews?.map((review, index) => (
                     <Grid key={review.id}>
                         <HomeCard
@@ -108,10 +107,10 @@ export default function MyReviews() {
                     </Grid>
                 ))}
             </Grid>
-
+                
             {reviewsCount > 0 && <Grid container justifyContent="center">
                 <Pagination
-                    count={Math.ceil(reviewsCount / ITEMS_PER_PAGE)}
+                    count={Math.ceil(reviewsCount / (reviews?.length || 1))}
                     page={page}
                     onChange={handleChange}
                     color="primary"

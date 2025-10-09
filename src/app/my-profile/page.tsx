@@ -8,20 +8,18 @@ import fomesApi from '../api';
 import CloseIcon from '@mui/icons-material/Close';
 import { useSearchParams } from 'next/navigation';
 
-
-
 export default function ProfilePage() {
   const [preview, setPreview] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [passwordError, setPasswordError] = useState<string>('');
   const [passwordSuccessIsOpen, setPasswordSuccessIsOpen] = useState(false);
   const searchParams = useSearchParams();
-  const profilePhoto = searchParams.get('profile_photo_uploaded');
-  const [profilePhotoIsOpen, setProfilePhotoIsOpen] = useState(true);
+  const profilePhotoWasUploaded = searchParams.get('profile_photo_uploaded');
+  const [uploadMessageIsClosed, setUploadMessageIsClosed] = useState(false);
   
-
-
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Save on react states the selected file to display image preview. 
+    // Profile photo is not updated here yet 
     const file = e.target.files?.[0];
     if (file) {
       setSelectedFile(file);
@@ -39,12 +37,9 @@ export default function ProfilePage() {
     const confirmPassword = formData.get('confirmPassword');
 
     if (newPassword !== confirmPassword) {
-      ('New passwords do not match!');
       setPasswordError('Las contraseñas no coinciden');
-
       return;
     }
-
     else {
       setPasswordError('');
       try {
@@ -52,10 +47,11 @@ export default function ProfilePage() {
           current_password: currentPassword,
           new_password: newPassword,
         });
+
+        // If the API call succeeded, update state to display password changed message
         setPasswordSuccessIsOpen(true);
       } catch (err) {
         setPasswordError('Error al cambiar la contraseña. Asegúrese de que ha introducido la contraseña actual correctamente.')
-
       }
     }
   };
@@ -69,9 +65,12 @@ export default function ProfilePage() {
     try {
       await fomesApi.patch("/profile-photo/", formData, {
         headers: {
+          // Send binary data instead of JSON
           "Content-Type": "multipart/form-data",
         },
       });
+      // Hard refresh to display the new profile photo on the header
+      // Set query param to display profile photo uploded message
       window.location.href = '/my-profile?profile_photo_uploaded=true';
     } catch (err) {
       console.error(err);
@@ -80,7 +79,7 @@ export default function ProfilePage() {
 
   return (
     <Box sx={{ p: 4 }}>
-      {profilePhotoIsOpen && profilePhoto && <Alert
+      {!uploadMessageIsClosed && profilePhotoWasUploaded && <Alert
               severity="success"
               variant="filled"
               action={
@@ -88,7 +87,7 @@ export default function ProfilePage() {
                   aria-label="close"
                   color="inherit"
                   size="small"
-                  onClick={() => setProfilePhotoIsOpen(false)}
+                  onClick={() => setUploadMessageIsClosed(true)}
                 >
                   <CloseIcon fontSize="inherit" />
                 </IconButton>

@@ -12,6 +12,9 @@ import fomesApi from '../api';
 import { useRouter } from 'next/navigation';
 
 export default function NewReview() {
+    // The react states below are used to store form values.
+    // We can't use a standard html form because some components, 
+    // like the slider, are not compatible with it
     const [rating, setRating] = useState<null | number>(3);
     const [review, setReview] = useState<string>('');
     const [noise, setNoise] = useState<number>(5);
@@ -25,6 +28,7 @@ export default function NewReview() {
     const router = useRouter();
     
     useEffect(() => {
+        // Check if user is logged in, otherwise redirect to login
         const accessToken = localStorage.getItem('access_token');
         if (!accessToken) {
             router.push('/login');
@@ -35,6 +39,8 @@ export default function NewReview() {
 
     React.useEffect(
         () => {
+            // Clear errors messages when form errors are fixed
+
             if (review && reviewError) {
                 setReviewError('');
             }
@@ -46,7 +52,9 @@ export default function NewReview() {
         [review, selectedPlace]
     )
 
+    
     const handleSubmit = async () => {
+        // Clear and check potential form errors
         setReviewError("");
         if (!review) {
             setReviewError("Escriba la reseña, por favor.");
@@ -58,7 +66,6 @@ export default function NewReview() {
             return;
         }
 
-
         const reviewData = {
             rating,
             description: review,
@@ -67,8 +74,17 @@ export default function NewReview() {
         };
 
         const placeData = selectedPlace as Object;
-        const homeData = { ...placeData, address: placeData.name, zip_code: placeData.postcode, town: placeData.city, floor: addressFloor, number: addressNumber };
+        const homeData = { 
+            ...placeData, 
+            address: placeData.name, 
+            zip_code: placeData.postcode, 
+            town: placeData.city, 
+            floor: addressFloor, 
+            number: addressNumber 
+        };
 
+        // Payload contains all the fields of the review and home. 
+        // If the home doesn't exist, it will be created
         const payload = {
             review: reviewData,
             home: homeData,
@@ -93,12 +109,13 @@ export default function NewReview() {
         }
     ]
 
-    const onChange = (
+    const onAutocompleteChange = (
         event: React.SyntheticEvent,
         value: string | null,
         reason: AutocompleteChangeReason,
         details?: AutocompleteChangeDetails<never> | undefined
     ) => {
+        // Update the react state selectedPlace, which will be used for the API call
         setSelectedPlace(value);
     };
     const autocompleteRequiredFields = ['city', 'postcode'];
@@ -106,7 +123,7 @@ export default function NewReview() {
     return (
         <Box sx={{ maxWidth: 600, mx: 'auto', p: 4 }}>
             <Typography variant="h6" mb={2}>Datos de la vivienda</Typography>
-            <SearchAutocomplete placeholder='Escribe la dirección' onChange={onChange} requiredFields={autocompleteRequiredFields}/>
+            <SearchAutocomplete placeholder='Escribe la dirección' onChange={onAutocompleteChange} requiredFields={autocompleteRequiredFields}/>
             <TextField
                 label="Número"
                 value={addressNumber}

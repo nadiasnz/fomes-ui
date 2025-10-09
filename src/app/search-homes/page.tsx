@@ -26,7 +26,8 @@ export default function SearchHomes() {
     const autoCompleteDefaultValue = searchParams.get('name') && searchParams.get('state') ?
         `${searchParams.get('name')}, ${searchParams.get('state')}` : undefined;
 
-    const handleChange = (event, value) => {
+    const handlePageChange = (event, value) => {
+        // Update page value to trigger API call, as the effect below has page as dependency
         setPage(value);
     };
 
@@ -36,11 +37,13 @@ export default function SearchHomes() {
         reason: AutocompleteChangeReason,
         details?: AutocompleteChangeDetails<never> | undefined
     ) => {
+        // Update query params to trigger new search
         router.push(`/search-homes?name=${value.name}&state=${value.state}`);
     };
 
 
     useEffect(() => {
+        // Call API to get homes page
         const fetchHomes = async () => {
             try {
                 const apiResponse = await fomesApi.get(`/homes/?search=${searchParams.get('name')}&page=${page}`);
@@ -98,7 +101,7 @@ export default function SearchHomes() {
                 <Pagination
                     count={Math.ceil(homesCount / 10)}
                     page={page}
-                    onChange={handleChange}
+                    onChange={handlePageChange}
                     color="primary"
                     shape="rounded"
                     sx={{ backgroundColor: "white" }}

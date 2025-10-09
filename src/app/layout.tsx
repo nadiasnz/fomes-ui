@@ -21,6 +21,7 @@ export const metadata: Metadata = {
   description: "Encuentra reseñas sobre pisos turísticos",
 };
 
+// This is the skeleton of the app, which is rendered on all pages
 export default function RootLayout({
   children,
 }: Readonly<{

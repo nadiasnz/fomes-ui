@@ -19,13 +19,13 @@ export default function Home() {
     reason: AutocompleteChangeReason,
     details?: AutocompleteChangeDetails<never> | undefined
   ) => {
+    // Redirect to search results for the place selected
     router.push(`/search-homes?name=${value.name}&state=${value.state}`);
   };
 
-
   return (
     <Box>
-      {/* Imagen de fondo con autocomplete */}
+      {/* Background image with search autocomplete */}
       <Box
         sx={{
           position: "relative",
@@ -42,7 +42,7 @@ export default function Home() {
         <SearchAutocomplete placeholder="Busca tu zona de interés" onChange={onChange} />
       </Box>
 
-      {/* Texto inferior */}
+      {/* Lower text */}
       <Container sx={{ mt: 3, textAlign: "center", px: 2 }}>
         <Typography variant="body1">
           ¿Quieres vivir o invertir en la zona que te gusta pero no sabes si el

@@ -1,9 +1,11 @@
 import axios from 'axios';
 
+// Object use to make API calls
 const fomesApi = axios.create({
   baseURL: 'http://127.0.0.1:8000/api/',
 });
 
+// Set authorization http header for API calls when the user is logged in
 fomesApi.interceptors.request.use((config) => {
   const token = localStorage.getItem('access_token');
   if (token) {
@@ -12,6 +14,7 @@ fomesApi.interceptors.request.use((config) => {
   return config;
 });
 
+// Redirect to login if user is not logged in or the session expired
 fomesApi.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -29,6 +32,7 @@ fomesApi.interceptors.response.use(
 export default fomesApi;
 
 
+// Home data returned by API
 export interface Home {
   id: number;
   address: string;

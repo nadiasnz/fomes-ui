@@ -10,13 +10,14 @@ import {
 export default function Footer() {
   return (
     <Box sx={{ py: 6 }}>
+      {/* Footer links */}
       <Container maxWidth="lg">
         <Box
           sx={{
             display: "flex",
             justifyContent: {
-              xs: "center",  // Centrado en móviles
-              sm: "flex-end" // A la derecha en pantallas mayores
+              xs: "center",  
+              sm: "flex-end" 
             },
             textAlign: {
               xs: "center",

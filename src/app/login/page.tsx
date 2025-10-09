@@ -22,8 +22,9 @@ export default function LoginPage() {
     const searchParams = useSearchParams();
 
     const welcomeUserName = searchParams.get('welcome');
-    const [welcomeMessageIsopen, setWelcomeMessageIsopen] = useState(true);
+    const [welcomeMessageIsOpen, setWelcomeMessageIsopen] = useState(true);
 
+    // Event handler for when the form is sent
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoading(true);
@@ -33,6 +34,7 @@ export default function LoginPage() {
         const password = formData.get('password');
 
         try {
+            // Login on the backend when the user name and password get access token
             const res = await fetch('http://127.0.0.1:8000/api/token/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -42,12 +44,14 @@ export default function LoginPage() {
             const data = await res.json();
 
             if (!res.ok) {
+                // Raise error if the backend response status is not 20x
                 throw new Error(data.message || 'Error al iniciar sesión');
             }
-
+            // Store token to access on Local storage and redirect to home page
             localStorage.setItem('access_token', data.access);
             localStorage.setItem('refresh_token', data.refresh);
-            window.location.href = '/';
+            // Hard refresh to force header to display the logged-in mode
+            window.location.href = '/';  
 
     } catch (err: any) {
         setError(err.message);
@@ -74,7 +78,7 @@ return (
             sx={{ width: '100%' }}
         >
             <Stack spacing={2}>
-                {welcomeMessageIsopen && welcomeUserName && <Alert
+                {welcomeMessageIsOpen && welcomeUserName && <Alert
                     severity="success"
                     variant="filled"
                     action={

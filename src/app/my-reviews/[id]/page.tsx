@@ -18,6 +18,7 @@ export default function EditReview() {
     const reviewId = params.id;
     const router = useRouter();
 
+    // Clear review error message when it is entered
     React.useEffect(
         () => {
             if (review && reviewError) {
@@ -30,7 +31,7 @@ export default function EditReview() {
     React.useEffect(
         () => {
         
-            
+            // Call API to get review data for form default values
             fomesApi.get(`reviews/${reviewId}`).then(
                 (response) => {
 
@@ -48,6 +49,7 @@ export default function EditReview() {
     )
 
     const handleSubmit = async () => {
+        // Show error if the review description is not entered and skipe API call
         setReviewError("");
         if (!review) {
             setReviewError("Escriba la reseña, por favor.");
@@ -63,6 +65,7 @@ export default function EditReview() {
         };
 
         try {
+            // Call API to edit review and redirect to /myreviews with success message
 
             fomesApi.patch(`reviews/${reviewId}/`, reviewData);
             router.push('/my-reviews?review=updated');
@@ -73,6 +76,7 @@ export default function EditReview() {
 
     };
 
+    // Slider marks
     const marks = [
         {
             value: 0,

@@ -41,6 +41,7 @@ export function Header() {
     const [profilePhotoUrl, setProfilePhotoUrl] = React.useState<string>('');
     const [isLoggedIn, setIsLoggedIn]= React.useState<boolean>(false);
 
+    // Local storage needs to be accessed on the browser, useEffect guarantees it
     React.useEffect(
         () => {
             const accessToken = localStorage.getItem('access_token');
@@ -76,12 +77,12 @@ export function Header() {
         setAnchorElUser(null);
     };
 
+    // Get profile picture
     React.useEffect(
         () => {
             fomesApi.get(`profile-photo/`).then(
                 (response) => {
-                    const profilePhoto = response.data.photo; 
-                    setProfilePhotoUrl(profilePhoto);
+                    setProfilePhotoUrl(response.data.photo);
                 }
             )
         },
@@ -92,6 +93,7 @@ export function Header() {
         <AppBar position="static" color="transparent">
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
+                    {/* Logo for large screen */}
                     <Typography
                         variant="h6"
                         noWrap
@@ -110,6 +112,7 @@ export function Header() {
                         FOMES
                     </Typography>
 
+                    {/* Navigation menu for small screen */}
                     <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
                         <IconButton
                             size="large"
@@ -147,6 +150,7 @@ export function Header() {
 
                         </Menu>
                     </Box>
+                    {/* Logo for small screen */}
                     <Typography
                         variant="h5"
                         noWrap
@@ -165,6 +169,7 @@ export function Header() {
                     >
                         FOMES
                     </Typography>
+                    {/* Navigation buttons for large screen */}
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, alignItems: 'center', justifyContent: 'flex-end', marginRight: '20px', gap: '20px' }}>
                         <Button
                             key='Escribe tu reseña'
@@ -184,6 +189,7 @@ export function Header() {
                         </Button>}
                     </Box>
                     {isLoggedIn && <Box sx={{ flexGrow: 0 }}>
+                        {/* User profile photo and user menu */}
                         <Tooltip title="Open settings">
                             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                                 <Avatar alt="Remy Sharp" src={profilePhotoUrl} />
