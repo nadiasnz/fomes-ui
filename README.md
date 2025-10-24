@@ -27,6 +27,8 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+We highly recommend to create an user account to have access to all the functionalities.
+
 ## Author and License
 
 This project was created by [Nadia Sáenz](https://github.com/nadiasnz) and is licensed by the Apache license. Link to [Github repository](https://github.com/nadiasnz/fomes-ui).
