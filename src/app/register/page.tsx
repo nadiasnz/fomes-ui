@@ -41,7 +41,7 @@ export default function RegisterPage() {
             
             //Throw error if the backend response status is not 20x
             if (!res.ok) {
-                const errorMessage = data.username ? 'Usuario ya existente' : 'Error al crear usuario';
+                const errorMessage = (data.username || data.email) ? 'Usuario ya existente' : 'Error al crear usuario';
                 throw new Error(errorMessage);
             }
             // Redirect to login with welcome messagge
