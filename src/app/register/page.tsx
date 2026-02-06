@@ -26,7 +26,14 @@ export default function RegisterPage() {
         const formData = new FormData(e.currentTarget);
         const username = formData.get('username');
         const email = formData.get('email');
+        const emailConfirmation = formData.get('email_confirmation');
         const password = formData.get('password');
+
+        if (email !== emailConfirmation) {
+            setError('Los emails no coinciden');
+            setLoading(false);
+            return;
+        }
 
         // API call to create user
         try {
@@ -38,7 +45,7 @@ export default function RegisterPage() {
 
             //  Get response payload
             const data = await res.json();
-            
+
             //Throw error if the backend response status is not 20x
             if (!res.ok) {
                 const errorMessage = (data.username || data.email) ? 'Usuario ya existente' : 'Error al crear usuario';
@@ -46,7 +53,7 @@ export default function RegisterPage() {
             }
             // Redirect to login with welcome messagge
             router.push(`/login?welcome=${encodeURIComponent(username as string)}`);
-        
+
         } catch (err: any) {
             // Store error message on state
             setError(err.message);
@@ -94,7 +101,7 @@ export default function RegisterPage() {
                         sx={{ backgroundColor: 'white' }}
                     />
                     <TextField
-                        name="email"
+                        name="email_confirmation"
                         label="Repite tu dirección de correo"
                         type="email"
                         color="success"
@@ -126,8 +133,8 @@ export default function RegisterPage() {
                             boxShadow: '0px 4px 6px rgba(0,0,0,0.15)',
                             '&:hover': { backgroundColor: '#5c9e6e' },
                         }}
-                    >   
-                    {/* Show spinner while the backend is proccessing the request */}
+                    >
+                        {/* Show spinner while the backend is proccessing the request */}
                         {loading ? <CircularProgress size={24} sx={{ color: 'white' }} /> : 'CREAR CUENTA'}
                     </Button>
                     {/* Show error message if the request fails */}
