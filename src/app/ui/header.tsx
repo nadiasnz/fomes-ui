@@ -80,11 +80,16 @@ export function Header() {
     // Get profile picture
     React.useEffect(
         () => {
-            fomesApi.get(`profile-photo/`).then(
-                (response) => {
-                    setProfilePhotoUrl(response.data.photo);
-                }
-            )
+            if (
+                localStorage.getItem('access_token')
+            ){
+                fomesApi.get(`profile-photo/`).then(
+                    (response) => {
+                        setProfilePhotoUrl(response.data.photo);
+                    }
+                )
+            }
+                
         },
         []
     )
