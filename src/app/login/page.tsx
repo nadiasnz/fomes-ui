@@ -14,6 +14,7 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Alert, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import fomesApi from '../api';
 
 
 export default function LoginPage() {
@@ -35,21 +36,15 @@ export default function LoginPage() {
 
         try {
             // Login on the backend when the user name and password get access token
-            const res = await fetch('http://127.0.0.1:8000/api/token/', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password }),
+            const res = await fomesApi.post(
+                '/token/', { username, password }
+            ).catch(error => {
+                throw new Error('Error al iniciar sesión');
             });
 
-            const data = await res.json();
-
-            if (!res.ok) {
-                // Raise error if the backend response status is not 20x
-                throw new Error(data.message || 'Error al iniciar sesión');
-            }
             // Store token to access on Local storage and redirect to home page
-            localStorage.setItem('access_token', data.access);
-            localStorage.setItem('refresh_token', data.refresh);
+            localStorage.setItem('access_token', res.data.access);
+            localStorage.setItem('refresh_token', res.data.refresh);
             // Hard refresh to force header to display the logged-in mode
             window.location.href = '/';  
 

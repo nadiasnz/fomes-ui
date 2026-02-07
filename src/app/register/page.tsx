@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import fomesApi from '../api';
 
 export default function RegisterPage() {
     const [loading, setLoading] = useState<boolean>(false);
@@ -37,20 +38,15 @@ export default function RegisterPage() {
 
         // API call to create user
         try {
-            const res = await fetch('http://127.0.0.1:8000/api/register/', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, email, password }),
+            await fomesApi.post('/register/', { username, email, password }).catch(
+                (error) => {
+                    // Throw error if the backend response status is not 20x
+                    const errorMessage = (error.response.data.username || error.response.data.email) ? 'Usuario ya existente' : 'Error al crear usuario';
+                    throw new Error(errorMessage);
             });
 
             //  Get response payload
-            const data = await res.json();
 
-            //Throw error if the backend response status is not 20x
-            if (!res.ok) {
-                const errorMessage = (data.username || data.email) ? 'Usuario ya existente' : 'Error al crear usuario';
-                throw new Error(errorMessage);
-            }
             // Redirect to login with welcome messagge
             router.push(`/login?welcome=${encodeURIComponent(username as string)}`);
 
