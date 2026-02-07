@@ -9,9 +9,9 @@ import {
     Stack,
     CircularProgress,
 } from '@mui/material';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { Alert, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import fomesApi from '../api';
@@ -21,9 +21,16 @@ export default function LoginPage() {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const searchParams = useSearchParams();
+    const router = useRouter();
 
     const welcomeUserName = searchParams.get('welcome');
     const [welcomeMessageIsOpen, setWelcomeMessageIsopen] = useState(true);
+
+     useEffect(() => {
+        if (localStorage.getItem('access_token')){
+            router.push('/')
+        }
+    }, []);
 
     // Event handler for when the form is sent
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
